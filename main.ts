@@ -46,7 +46,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 function EnemyDeath (enemy: Sprite) {
     enemy.destroy(effects.disintegrate, 500)
-    if (Math.percentChance(10)) {
+    if (Math.percentChance(25)) {
         PowerUp = sprites.create(img`
             . . . 8 8 8 8 8 8 8 . . . . . . 
             . 8 8 8 8 8 8 8 8 8 8 8 . . . . 
@@ -107,7 +107,6 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 })
 let statusbar: StatusBarSprite = null
 let EnemyShip: Sprite = null
-let enemyspawntime = 0
 let PowerUp: Sprite = null
 let doublefiremode: Sprite = null
 let projectile: Sprite = null
@@ -135,13 +134,14 @@ controller.moveSprite(mySprite)
 mySprite.setStayInScreen(true)
 info.setLife(5)
 let enemy_speed = 20
+let enemyspawntime = 2000
 game.onUpdateInterval(5000, function () {
     enemy_speed += 5
     enemy_speed = Math.min(enemy_speed, 50)
     enemyspawntime += -200
     enemyspawntime = Math.max(enemyspawntime, 500)
 })
-game.onUpdateInterval(2000, function () {
+forever(function () {
     EnemyShip = sprites.create(img`
         . . . . . . . . 2 2 . . . . . . 
         . . . . . . . . 3 2 . . . . . . 
@@ -161,10 +161,11 @@ game.onUpdateInterval(2000, function () {
         . . . . . . . . . . . . . . . . 
         `, SpriteKind.Enemy)
     EnemyShip.x = scene.screenWidth()
-    EnemyShip.vx = -20
+    EnemyShip.vx = 0 - enemy_speed
     EnemyShip.y = randint(10, scene.screenHeight() - 10)
     statusbar = statusbars.create(20, 4, StatusBarKind.EnemyHealth)
     statusbar.setColor(7, 2)
     statusbar.max = 100
     statusbar.attachToSprite(EnemyShip)
+    pause(enemyspawntime)
 })
